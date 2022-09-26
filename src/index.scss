@@ -1,4 +1,4 @@
-$red: #d9534f;
+$red: #ec5713;
 
 // // Make red the primary color
 $primary: $red;
@@ -384,3 +384,6 @@ $primary: $red;
 
 /** [MM-P2P] Experiment */
 @import "experiments/mm-p2p/index.scss";
+
+/** liberties styling **/
+@import "src/assets/scss/liberties.scss";

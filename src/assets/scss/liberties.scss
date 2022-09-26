@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400&family=Roboto+Condensed:wght@400;700&display=swap');
+
+body {
+  font-family: 'Lato', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6, .btn {
+  font-family: 'Roboto Condensed', sans-serif;
+}
+
+a {
+  color: rgba(0,0,0,1);
+  transition: color .3s cubic-bezier(.25,.85,.55,1),background .3s cubic-bezier(.25,.85,.55,1),border .3s cubic-bezier(.25,.85,.55,1),box-shadow .3s cubic-bezier(.25,.85,.55,1);
+  border-bottom: 0.125rem solid #ec5713;
+}
+
+a:hover {
+  color: rgba(255,255,255,1);
+}
+
+a:hover {
+  background-color: rgba(0,0,0,1);
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow),var(--tw-ring-shadow),0 0 transparent;
+  box-shadow: var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 transparent);
+  --tw-ring-color: rgba(0,0,0,1);
+}
+
+#root header {
+  background-color: #000;
+  color: #969696;
+
+  a {
+    color: #969696;
+  }
+}
+
+.btn-outline-primary, .btn-brand  {
+  transition: all 0.1s linear 0s;
+  --tw-shadow: inset 0px 0px 0px 1px #ec5713;
+  text-transform: uppercase;
+  border-radius: 0.1875rem !important;
+  border-color: #ec5713;
+  color: #ec5713;
+  font-weight: bold;
+}
+
+.btn-brand {
+  background-color: #ec5713;
+}
+
+.btn-outline-primary:focus, .btn-outline-primary:hover, .btn-brand:focus, .btn-brand:hover {
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(4px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow),var(--tw-ring-shadow),0 0 transparent;
+  box-shadow: var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 transparent);
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgba(236,87,19,var(--tw-ring-opacity));
+  --tw-ring-opacity: 0.6;
+  outline: none;
+  z-index: 10;
+}
