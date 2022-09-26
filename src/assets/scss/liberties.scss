@@ -34,6 +34,32 @@ a:hover {
   a {
     color: #969696;
   }
+
+  .logo {
+    background-image: url('../img/logo.svg');
+    opacity: .6;
+    background-position: center center;
+    background-repeat: no-repeat;
+    width: 8rem;
+
+    img {
+      display: none;
+    }
+  }
+}
+
+footer {
+  a.d-block {
+    background-image: url('../img/logo.svg');
+    opacity: .6;
+    background-position: center center;
+    background-repeat: no-repeat;
+    width: 6rem;
+
+    img {
+      display: none;
+    }
+  }
 }
 
 .btn-outline-primary, .btn-brand  {
