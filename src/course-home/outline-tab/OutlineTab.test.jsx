@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
 import { Factory } from 'rosie';
 import { getConfig } from '@edx/frontend-platform';
 import { sendTrackEvent, sendTrackingLogEvent } from '@edx/frontend-platform/analytics';
@@ -52,14 +51,9 @@ describe('Outline Tab', () => {
     axiosMock.onGet(outlineUrl).reply(200, outlineTabData);
   }
 
-  async function fetchAndRender(path = '') {
+  async function fetchAndRender() {
     await executeThunk(thunks.fetchOutlineTab(courseId), store.dispatch);
-    await act(async () => render(
-      <MemoryRouter initialEntries={[path]}>
-        <OutlineTab />
-      </MemoryRouter>,
-      { store },
-    ));
+    await act(async () => render(<OutlineTab />, { store }));
   }
 
   beforeEach(async () => {
@@ -144,8 +138,25 @@ describe('Outline Tab', () => {
       expect(screen.getByTitle('Incomplete section')).toBeInTheDocument();
     });
 
-    it('SequenceLink displays link', async () => {
+    it('SequenceLink displays points to legacy courseware', async () => {
       const { courseBlocks } = await buildMinimalCourseBlocks(courseId, 'Title', { resumeBlock: true });
+      setMetadata({
+        can_load_courseware: false,
+      });
+      setTabData({
+        course_blocks: { blocks: courseBlocks.blocks },
+      });
+      await fetchAndRender();
+
+      const sequenceLink = screen.getByText('Title of Sequence');
+      expect(sequenceLink.getAttribute('href')).toContain(`/courses/${courseId}`);
+    });
+
+    it('SequenceLink displays points to courseware MFE', async () => {
+      const { courseBlocks } = await buildMinimalCourseBlocks(courseId, 'Title', { resumeBlock: true });
+      setMetadata({
+        can_load_courseware: true,
+      });
       setTabData({
         course_blocks: { blocks: courseBlocks.blocks },
       });
@@ -342,26 +353,6 @@ describe('Outline Tab', () => {
       const button = await screen.getByTestId('weekly-learning-goal-input-Regular');
       fireEvent.click(button);
       expect(spy).toHaveBeenCalledTimes(0);
-    });
-
-    it('post goal via query param', async () => {
-      setTabData({
-        course_goals: {
-          weekly_learning_goal_enabled: true,
-        },
-      });
-      const spy = jest.spyOn(thunks, 'saveWeeklyLearningGoal');
-      sendTrackEvent.mockClear();
-
-      await fetchAndRender('http://localhost/?weekly_goal=3');
-      expect(spy).toHaveBeenCalledTimes(1);
-      expect(sendTrackEvent).toHaveBeenCalledWith('welcome.email.clicked.setgoal', {});
-    });
-
-    it('emit start course event via query param', async () => {
-      sendTrackEvent.mockClear();
-      await fetchAndRender('http://localhost/?start_course=1');
-      expect(sendTrackEvent).toHaveBeenCalledWith('welcome.email.clicked.startcourse', {});
     });
 
     describe('weekly learning goal is not set', () => {
@@ -668,6 +659,7 @@ describe('Outline Tab', () => {
             cert_status: CERT_STATUS_TYPE.EARNED_NOT_AVAILABLE,
             cert_web_view_url: null,
             certificate_available_date: tomorrow.toISOString(),
+            download_url: null,
           },
         }, {
           date_blocks: [
@@ -695,6 +687,7 @@ describe('Outline Tab', () => {
           cert_data: {
             cert_status: CERT_STATUS_TYPE.UNVERIFIED,
             cert_web_view_url: null,
+            download_url: null,
           },
         }, {
           date_blocks: [
@@ -763,6 +756,7 @@ describe('Outline Tab', () => {
           cert_data: {
             cert_status: CERT_STATUS_TYPE.REQUESTING,
             cert_web_view_url: null,
+            download_url: null,
           },
         }, {
           date_blocks: [
@@ -796,7 +790,50 @@ describe('Outline Tab', () => {
             org_key: 'edX',
           });
       });
-
+      it('tracks download cert button', async () => {
+        sendTrackEvent.mockClear();
+        const now = new Date();
+        const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+        const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+        setMetadata({ is_enrolled: true });
+        setTabData({
+          cert_data: {
+            cert_status: CERT_STATUS_TYPE.DOWNLOADABLE,
+            cert_web_view_url: null,
+            download_url: null,
+          },
+        }, {
+          date_blocks: [
+            {
+              date_type: 'course-end-date',
+              date: yesterday.toISOString(),
+              title: 'End',
+            },
+            {
+              date_type: 'certificate-available-date',
+              date: tomorrow.toISOString(),
+              title: 'Cert Available',
+            },
+            {
+              date_type: 'verification-deadline-date',
+              date: tomorrow.toISOString(),
+              link_text: 'Verify',
+              title: 'Verification Upgrade Deadline',
+            },
+          ],
+        });
+        await fetchAndRender();
+        sendTrackEvent.mockClear();
+        const requestingButton = screen.getByRole('button', { name: 'View my certificate' });
+        fireEvent.click(requestingButton);
+        expect(sendTrackEvent).toHaveBeenCalledTimes(1);
+        expect(sendTrackEvent).toHaveBeenCalledWith('edx.ui.lms.course_outline.certificate_alert_downloadable_button.clicked',
+          {
+            courserun_key: courseId,
+            is_staff: false,
+            org_key: 'edX',
+          });
+      });
       it('tracks unverified cert button', async () => {
         sendTrackEvent.mockClear();
         const now = new Date();
@@ -807,6 +844,7 @@ describe('Outline Tab', () => {
           cert_data: {
             cert_status: CERT_STATUS_TYPE.UNVERIFIED,
             cert_web_view_url: null,
+            download_url: null,
           },
         }, {
           date_blocks: [
@@ -894,6 +932,7 @@ describe('Outline Tab', () => {
           cert_status: CERT_STATUS_TYPE.DOWNLOADABLE,
           cert_web_view_url: 'certificate/testuuid',
           certificate_available_date: null,
+          download_url: null,
         },
       }, {
         date_blocks: [
@@ -919,6 +958,7 @@ describe('Outline Tab', () => {
           cert_status: CERT_STATUS_TYPE.REQUESTING,
           cert_web_view_url: null,
           certificate_available_date: null,
+          download_url: null,
         },
       }, {
         date_blocks: [
@@ -932,6 +972,33 @@ describe('Outline Tab', () => {
       await fetchAndRender();
       expect(screen.queryByText('Congratulations! Your certificate is ready.')).toBeInTheDocument();
       expect(screen.queryByText('Request certificate')).toBeInTheDocument();
+    });
+  });
+
+  describe('Certificate (pdf) Complete Alert', () => {
+    it('appears', async () => {
+      const now = new Date();
+      const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+      setMetadata({ is_enrolled: true });
+      setTabData({
+        cert_data: {
+          cert_status: CERT_STATUS_TYPE.DOWNLOADABLE,
+          cert_web_view_url: null,
+          certificate_available_date: null,
+          download_url: 'download/url',
+        },
+      }, {
+        date_blocks: [
+          {
+            date_type: 'course-end-date',
+            date: yesterday.toISOString(),
+            title: 'End',
+          },
+        ],
+      });
+      await fetchAndRender();
+      expect(screen.queryByText('Congratulations! Your certificate is ready.')).toBeInTheDocument();
+      expect(screen.queryByRole('link', { name: 'Download my certificate' })).toBeInTheDocument();
     });
   });
 

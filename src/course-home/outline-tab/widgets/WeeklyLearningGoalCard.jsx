@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { Form, Card, Icon } from '@edx/paragon';
-import { history } from '@edx/frontend-platform';
 import { sendTrackEvent } from '@edx/frontend-platform/analytics';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
@@ -34,9 +32,8 @@ function WeeklyLearningGoalCard({
   const [daysPerWeekGoal, setDaysPerWeekGoal] = useState(daysPerWeek);
   // eslint-disable-next-line react/prop-types
   const [isGetReminderSelected, setGetReminderSelected] = useState(subscribedToReminders);
-  const location = useLocation();
 
-  function handleSelect(days, triggeredFromEmail = false) {
+  function handleSelect(days) {
     // Set the subscription button if this is the first time selecting a goal
     const selectReminders = daysPerWeekGoal === null ? true : isGetReminderSelected;
     setGetReminderSelected(selectReminders);
@@ -50,9 +47,6 @@ function WeeklyLearningGoalCard({
         num_days: days,
         reminder_selected: selectReminders,
       });
-      if (triggeredFromEmail) {
-        sendTrackEvent('welcome.email.clicked.setgoal', {});
-      }
     }
   }
 
@@ -70,21 +64,6 @@ function WeeklyLearningGoalCard({
       });
     }
   }
-
-  useEffect(() => {
-    const currentParams = new URLSearchParams(location.search);
-    const weeklyGoal = Number(currentParams.get('weekly_goal'));
-    if ([1, 3, 5].includes(weeklyGoal)) {
-      handleSelect(weeklyGoal, true);
-
-      // Deleting the weekly_goal query param as it only needs to be set once
-      // whenever passed in query params.
-      currentParams.delete('weekly_goal');
-      history.replace({
-        search: currentParams.toString(),
-      });
-    }
-  }, [location.search]);
 
   return (
     <Card

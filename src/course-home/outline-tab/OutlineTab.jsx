@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { sendTrackEvent } from '@edx/frontend-platform/analytics';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
-import { history } from '@edx/frontend-platform';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+
 import { Button } from '@edx/paragon';
 import { AlertList } from '../../generic/user-messages';
 
@@ -109,23 +108,6 @@ function OutlineTab({ intl }) {
 
   /** show post enrolment survey to only B2C learners */
   const learnerType = isEnterpriseUser() ? 'enterprise_learner' : 'b2c_learner';
-
-  const location = useLocation();
-
-  useEffect(() => {
-    const currentParams = new URLSearchParams(location.search);
-    const startCourse = currentParams.get('start_course');
-    if (startCourse === '1') {
-      sendTrackEvent('welcome.email.clicked.startcourse', {});
-
-      // Deleting the course_start query param as it only needs to be set once
-      // whenever passed in query params.
-      currentParams.delete('start_course');
-      history.replace({
-        search: currentParams.toString(),
-      });
-    }
-  }, [location.search]);
 
   return (
     <>
