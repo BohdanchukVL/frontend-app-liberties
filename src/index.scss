@@ -1,7 +1,11 @@
-$red: #ec5713;
+$branding: #ec5713;
 
 // // Make red the primary color
-$primary: $red;
+$primary: $branding!default;
+
+$theme-colors: (
+  primary: $branding
+);
 
 @import "~@edx/brand/paragon/fonts";
 @import "~@edx/brand/paragon/variables";
@@ -9,6 +13,15 @@ $primary: $red;
 @import "~@edx/brand/paragon/overrides";
 
 @import "~@edx/frontend-component-footer/dist/footer";
+
+$branding: #ec5713;
+
+// // Make red the primary color
+$primary: $branding!default;
+
+$theme-colors: (
+  primary: $branding
+);
 
 #root {
   display: flex;
