@@ -47,6 +47,7 @@ function StartOrResumeCourseCard({ intl }) {
         actions={(
           <Button
             variant="brand"
+            className="branded-button"
             block
             href={resumeCourseUrl}
             onClick={() => logResumeCourseClick()}

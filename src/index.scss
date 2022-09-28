@@ -1,11 +1,19 @@
-$branding: #ec5713;
+$primary: #ec5713 !default;
+$brand: #ec5713 !default;
+$accent-a: #73d5ff !default;
+$accent-b: #73d5ff !default;
 
-// // Make red the primary color
-$primary: $branding!default;
-
-$theme-colors: (
-  primary: $branding
+$theme-colors: () !default;
+$theme-colors: map-merge(
+  (
+    "primary":    $primary,
+    "brand":      $brand,
+    "accent-a":   $accent-a,
+    "accent-b":   $accent-b,
+  ),
+  $theme-colors
 );
+
 
 @import "~@edx/brand/paragon/fonts";
 @import "~@edx/brand/paragon/variables";
@@ -13,15 +21,6 @@ $theme-colors: (
 @import "~@edx/brand/paragon/overrides";
 
 @import "~@edx/frontend-component-footer/dist/footer";
-
-$branding: #ec5713;
-
-// // Make red the primary color
-$primary: $branding!default;
-
-$theme-colors: (
-  primary: $branding
-);
 
 #root {
   display: flex;
@@ -89,8 +88,8 @@ $theme-colors: (
     &:focus,
     &.active {
       font-weight: $font-weight-normal;
-      color: $primary-500;
-      border-bottom-color: $primary-500;
+      color: #000!important;
+      border-bottom-color: #ec5713!important;
     }
   }
 }
