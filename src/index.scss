@@ -14,6 +14,41 @@ $theme-colors: map-merge(
   $theme-colors
 );
 
+.btn-primary {
+  @include button-variant(#ec5713, #ec5713, #ec5713, #ec5713, #ec5713, #ec5713);
+}
+
+.btn-primary-outline {
+  @include button-outline-variant(#ec5713, #fff, #ec5713, #ec5713);
+}
+
+.bg-primary-500 {
+  background-color: #ec5713!important;
+}
+
+.btn-icon {
+  @each $name, $color in $icon-button-colors {
+      &.btn-icon-#{$name} {
+          @include btn-icon-variant(#ec5713, #fff);
+      }
+
+      &.btn-icon-inverse-#{$name} {
+          @include btn-icon-variant(#fff, #ec5713);
+      }
+
+      &.btn-icon-#{$name}-active {
+          @include btn-icon-variant(#ec5713, #fff, true);
+      }
+
+      &.btn-icon-inverse-#{$name}-active {
+          @include btn-icon-variant(#fff, #ec5713, true);
+      }
+  }
+}
+
+.bg-warning-300 {
+  background-color: #73d5ff!important;
+}
 
 @import "~@edx/brand/paragon/fonts";
 @import "~@edx/brand/paragon/variables";

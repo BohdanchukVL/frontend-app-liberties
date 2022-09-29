@@ -60,6 +60,7 @@ a:not(.btn):hover, .btn-link:hover {
     background-position: center center;
     background-repeat: no-repeat;
     background-size: contain;
+    border-bottom: none!important;
     border: none;
     width: 8rem;
 
@@ -89,7 +90,8 @@ footer {
 }
 
 .btn {
-  padding: 1rem 1.5rem;
+  padding: 1rem 1.5rem!important;
+  line-height: 1!important;
 }
 
 .btn-outline-primary, .btn-brand, .branded-button, .branded-outline-button  {
@@ -99,8 +101,18 @@ footer {
   text-transform: uppercase;
   border-radius: 0.1875rem !important;
   border-color: #ec5713!important;
-  color: #fff!important;
   font-weight: bold!important;
+}
+.btn-outline-primary, .branded-outline-button {
+  color: #ec5713!important;
+}
+
+.branded-outline-button {
+  background-color: transparent!important;
+}
+.branded-outline-button:hover {
+  background-color: #ec5713!important;
+  color: #fff!important;
 }
 
 .btn-brand, .branded-button {
@@ -141,4 +153,25 @@ footer {
 .nav-underline-tabs .nav-link {
   color: #454544!important;
   font-family: 'Roboto Condensed';
+}
+
+.list-unstyled.d-flex.flex-nowrap.align-items-center.m-0 {
+  .list-unstyled.col-auto.m-0.p-0 {
+    border-bottom: none;
+  }
+}
+.dropdown-menu {
+  a {
+    border-bottom: none!important;
+  }
+}
+.dropdown-item.active, .dropdown-item:active {
+  background-color: #ec5713!important;
+  color: #fff!important;
+}
+
+@media (max-width: 568px) {
+  .course-title-lockup {
+    font-size: 14px!important;
+  }
 }
