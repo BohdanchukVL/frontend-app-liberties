@@ -87,8 +87,7 @@ a:not(.btn):hover, .btn-link:hover {
   }
 
   .logo {
-    background-image: url('../img/logo.svg');
-    opacity: .6;
+    background-image: url('../img/logo.png');
     background-position: center center;
     background-repeat: no-repeat;
     background-size: contain;
@@ -148,7 +147,18 @@ footer {
 }
 
 .btn-brand, .branded-button {
-  background-color: #ec5713;
+  background-color: #ec5713!important;
+}
+.btn-inverse-outline-primary {
+  color: #fff!important;
+}
+.popover-body {
+  background-color: #73d5ff;
+  color: #000!important;
+}
+
+.bg-warning-300 {
+  background-color: #73d5ff!important;
 }
 
 .btn-outline-primary:focus,
@@ -188,7 +198,7 @@ footer {
 }
 
 .list-unstyled.d-flex.flex-nowrap.align-items-center.m-0 {
-  .list-unstyled.col-auto.m-0.p-0 {
+  li a {
     border-bottom: none;
   }
 }

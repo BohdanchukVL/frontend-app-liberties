@@ -14,10 +14,6 @@ $theme-colors: map-merge(
   $theme-colors
 );
 
-.bg-warning-300 {
-  background-color: #73d5ff!important;
-}
-
 @import "~@edx/brand/paragon/fonts";
 @import "~@edx/brand/paragon/variables";
 @import "~@edx/paragon/scss/core/core";
