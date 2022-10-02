@@ -84,7 +84,7 @@ export default function InstructorToolbar(props) {
           {(urlLegacy || urlStudio || urlInsights) && (
             <>
               <hr className="border-light" />
-              <span className="mr-2 mt-1 col-form-label">View course in:</span>
+              <span className="mr-2 mt-2 col-form-label">View course in:</span>
             </>
           )}
           {urlLegacy && (

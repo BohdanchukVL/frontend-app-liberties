@@ -80,6 +80,7 @@ a:not(.btn):hover, .btn-link:hover {
     text-transform: uppercase;
     font-weight: 700;
     border-bottom: 2px solid transparent;
+    font-family: 'Roboto Condensed', sans-serif!important;
   }
 
   a:not(.btn):hover {
@@ -152,12 +153,31 @@ footer {
 .btn-inverse-outline-primary {
   color: #fff!important;
 }
+
+.popover {
+  border: none!important;
+
+  .arrow:before {
+    border-bottom-color: transparent!important;
+  }
+}
+#minimum-grade-tooltip .arrow:after {
+  border-bottom-color: #73d5ff!important;
+}
 .popover-body {
   background-color: #73d5ff;
+  border-radius: .25rem;
   color: #000!important;
 }
+.donut-hole.complete-stroke, .donut-ring.complete-stroke, .donut-segment.complete-stroke {
+  stroke: #73d5ff;
+}
+.pgn__data-table a {
+  border-bottom: none!important;
+  text-decoration: underline!important;
+}
 
-.bg-warning-300 {
+body .bg-warning-300 {
   background-color: #73d5ff!important;
 }
 
@@ -215,5 +235,12 @@ footer {
 @media (max-width: 568px) {
   .course-title-lockup {
     font-size: 14px!important;
+  }
+}
+@media (max-width: 768px) {
+  .user-dropdown button {
+    padding: 0!important;
+    background: transparent!important;
+    border: none!important;
   }
 }

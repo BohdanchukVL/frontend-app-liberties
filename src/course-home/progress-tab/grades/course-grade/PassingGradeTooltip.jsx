@@ -24,7 +24,7 @@ function PassingGradeTooltip({ intl, passingGrade, tooltipClassName }) {
         placement="bottom"
         overlay={(
           <Popover id="minimum-grade-tooltip" className={`bg-primary-500 ${tooltipClassName}`} aria-hidden="true">
-            <Popover.Content className="text-white">
+            <Popover.Content>
               {passingGrade}%
             </Popover.Content>
           </Popover>
