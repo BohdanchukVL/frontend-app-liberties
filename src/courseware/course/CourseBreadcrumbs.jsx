@@ -131,7 +131,7 @@ export default function CourseBreadcrumbs({
       <ol className="list-unstyled d-flex  flex-nowrap align-items-center m-0">
         <li className="list-unstyled col-auto m-0 p-0">
           <Link
-            className="flex-shrink-0 text-primary"
+            className="flex-shrink-0"
             to={`/course/${courseId}/home`}
           >
             <FontAwesomeIcon icon={faHome} className="mr-2" />
