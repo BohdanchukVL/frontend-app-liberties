@@ -4,7 +4,12 @@ import { AppContext, ErrorPage } from '@edx/frontend-platform/react';
 import { Modal } from '@edx/paragon';
 import PropTypes from 'prop-types';
 import React, {
-  Suspense, useCallback, useContext, useEffect, useLayoutEffect, useState,
+  Suspense,
+  useCallback,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useState
 } from 'react';
 import { useDispatch } from 'react-redux';
 import { processEvent } from '../../../course-home/data/thunks';
@@ -16,6 +21,7 @@ import PageLoading from '../../../generic/PageLoading';
 import { fetchCourse } from '../../data';
 import BookmarkButton from '../bookmark/BookmarkButton';
 import messages from './messages';
+import Cookies from 'js-cookie';
 
 const HonorCode = React.lazy(() => import('./honor-code'));
 const LockPaywall = React.lazy(() => import('./lock-paywall'));
@@ -30,9 +36,8 @@ const LockPaywall = React.lazy(() => import('./lock-paywall'));
  * This policy was selected in conference with the edX Security Working Group.
  * Changes to it should be vetted by them (security@edx.org).
  */
-const IFRAME_FEATURE_POLICY = (
-  'microphone *; camera *; midi *; geolocation *; encrypted-media *'
-);
+const IFRAME_FEATURE_POLICY =
+  'microphone *; camera *; midi *; geolocation *; encrypted-media *';
 
 /**
  * We discovered an error in Firefox where - upon iframe load - React would cease to call any
@@ -62,7 +67,7 @@ const IFRAME_FEATURE_POLICY = (
 function useLoadBearingHook(id) {
   const setValue = useState(0)[1];
   useLayoutEffect(() => {
-    setValue(currentValue => currentValue + 1);
+    setValue((currentValue) => currentValue + 1);
   }, [id]);
 }
 
@@ -71,7 +76,10 @@ export function sendUrlHashToFrame(frame) {
   if (hash) {
     // The url hash will be sent to LMS-served iframe in order to find the location of the
     // hash within the iframe.
-    frame.contentWindow.postMessage({ hashName: hash }, `${getConfig().LMS_BASE_URL}`);
+    frame.contentWindow.postMessage(
+      { hashName: hash },
+      `${getConfig().LMS_BASE_URL}`
+    );
   }
 }
 
@@ -82,11 +90,13 @@ function Unit({
   id,
   intl,
   /** [MM-P2P] Experiment */
-  mmp2p,
+  mmp2p
 }) {
   const { authenticatedUser } = useContext(AppContext);
   const view = authenticatedUser ? 'student_view' : 'public_view';
-  let iframeUrl = `${getConfig().LMS_BASE_URL}/xblock/${id}?show_title=0&show_bookmark_button=0&recheck_access=1&view=${view}`;
+  let iframeUrl = `${
+    getConfig().LMS_BASE_URL
+  }/xblock/${id}?show_title=0&show_bookmark_button=0&recheck_access=1&view=${view}`;
   if (format) {
     iframeUrl += `&format=${format}`;
   }
@@ -95,18 +105,21 @@ function Unit({
   const [hasLoaded, setHasLoaded] = useState(false);
   const [showError, setShowError] = useState(false);
   const [modalOptions, setModalOptions] = useState({ open: false });
+  const [cookiseSettings, setCookieSettings] = useState(undefined);
   const [shouldDisplayHonorCode, setShouldDisplayHonorCode] = useState(false);
 
   const unit = useModel('units', id);
   const course = useModel('coursewareMeta', courseId);
-  const {
-    contentTypeGatingEnabled,
-    userNeedsIntegritySignature,
-  } = course;
+  const { contentTypeGatingEnabled, userNeedsIntegritySignature } = course;
 
   const dispatch = useDispatch();
   // Do not remove this hook.  See function description.
   useLoadBearingHook(id);
+
+  useEffect(() => {
+    console.log('COOKIE_SETTINGS', Cookies.get('cookies_settings'))
+    setCookieSettings(Cookies.get('cookies_settings'));
+  });
 
   useEffect(() => {
     if (userNeedsIntegritySignature && unit.graded) {
@@ -116,28 +129,31 @@ function Unit({
     }
   }, [userNeedsIntegritySignature]);
 
-  const receiveMessage = useCallback(({ data }) => {
-    const {
-      type,
-      payload,
-    } = data;
-    if (type === 'plugin.resize') {
-      setIframeHeight(payload.height);
-      if (!hasLoaded && iframeHeight === 0 && payload.height > 0) {
-        setHasLoaded(true);
-        if (onLoaded) {
-          onLoaded();
+  const receiveMessage = useCallback(
+    ({ data }) => {
+      const { type, payload } = data;
+      if (type === 'plugin.resize') {
+        setIframeHeight(payload.height);
+        if (!hasLoaded && iframeHeight === 0 && payload.height > 0) {
+          setHasLoaded(true);
+          if (onLoaded) {
+            onLoaded();
+          }
         }
+      } else if (type === 'plugin.modal') {
+        payload.open = true;
+        setModalOptions(payload);
+      } else if (data.offset) {
+        // We listen for this message from LMS to know when the page needs to
+        // be scrolled to another location on the page.
+        window.scrollTo(
+          0,
+          data.offset + document.getElementById('unit-iframe').offsetTop
+        );
       }
-    } else if (type === 'plugin.modal') {
-      payload.open = true;
-      setModalOptions(payload);
-    } else if (data.offset) {
-      // We listen for this message from LMS to know when the page needs to
-      // be scrolled to another location on the page.
-      window.scrollTo(0, data.offset + document.getElementById('unit-iframe').offsetTop);
-    }
-  }, [id, setIframeHeight, hasLoaded, iframeHeight, setHasLoaded, onLoaded]);
+    },
+    [id, setIframeHeight, hasLoaded, iframeHeight, setHasLoaded, onLoaded]
+  );
   useEventListener('message', receiveMessage);
   useEffect(() => {
     sendUrlHashToFrame(document.getElementById('unit-iframe'));
@@ -146,100 +162,123 @@ function Unit({
   return (
     <div className="unit">
       <h1 className="mb-0 h3">{unit.title}</h1>
-      <h2 className="sr-only">{intl.formatMessage(messages.headerPlaceholder)}</h2>
+      <h2 className="sr-only">
+        {intl.formatMessage(messages.headerPlaceholder)}
+      </h2>
       <BookmarkButton
         unitId={unit.id}
         isBookmarked={unit.bookmarked}
         isProcessing={unit.bookmarkedUpdateState === 'loading'}
       />
-      { !mmp2p.state.isEnabled && contentTypeGatingEnabled && unit.containsContentTypeGatedContent && (
-        <Suspense
-          fallback={(
-            <PageLoading
-              srMessage={intl.formatMessage(messages.loadingLockedContent)}
-            />
-          )}
-        >
-          <LockPaywall courseId={courseId} />
-        </Suspense>
-      )}
-      { /** [MM-P2P] Experiment */ }
-      { mmp2p.meta.showLock && (
-        <MMP2PLockPaywall options={mmp2p} />
-      )}
+      {!mmp2p.state.isEnabled &&
+        contentTypeGatingEnabled &&
+        unit.containsContentTypeGatedContent && (
+          <Suspense
+            fallback={
+              <PageLoading
+                srMessage={intl.formatMessage(messages.loadingLockedContent)}
+              />
+            }
+          >
+            <LockPaywall courseId={courseId} />
+          </Suspense>
+        )}
+      {/** [MM-P2P] Experiment */}
+      {mmp2p.meta.showLock && <MMP2PLockPaywall options={mmp2p} />}
       {!mmp2p.meta.blockContent && shouldDisplayHonorCode && (
         <Suspense
-          fallback={(
+          fallback={
             <PageLoading
               srMessage={intl.formatMessage(messages.loadingHonorCode)}
             />
-          )}
+          }
         >
           <HonorCode courseId={courseId} />
         </Suspense>
       )}
-      { /** [MM-P2P] Experiment (conditional) */ }
-      {!mmp2p.meta.blockContent && !shouldDisplayHonorCode && !hasLoaded && !showError && (
-        <PageLoading
-          srMessage={intl.formatMessage(messages.loadingSequence)}
-        />
-      )}
-      {!mmp2p.meta.blockContent && !shouldDisplayHonorCode && !hasLoaded && showError && (
-        <ErrorPage />
-      )}
+      {/** [MM-P2P] Experiment (conditional) */}
+      {!mmp2p.meta.blockContent &&
+        !shouldDisplayHonorCode &&
+        !hasLoaded &&
+        !showError && (
+          <PageLoading
+            srMessage={intl.formatMessage(messages.loadingSequence)}
+          />
+        )}
+      {!mmp2p.meta.blockContent &&
+        !shouldDisplayHonorCode &&
+        !hasLoaded &&
+        showError && <ErrorPage />}
       {modalOptions.open && (
         <Modal
-          body={(
+          body={
             <>
-              {modalOptions.body
-                ? <div className="unit-modal">{ modalOptions.body }</div>
-                : (
-                  <iframe
-                    title={modalOptions.title}
-                    allow={IFRAME_FEATURE_POLICY}
-                    frameBorder="0"
-                    src={modalOptions.url}
-                    style={{
-                      width: '100%',
-                      height: '100vh',
-                    }}
-                  />
-                )}
+              {modalOptions.body ? (
+                <div className="unit-modal">{modalOptions.body}</div>
+              ) : (
+                <iframe
+                  title={modalOptions.title}
+                  allow={IFRAME_FEATURE_POLICY}
+                  frameBorder="0"
+                  src={modalOptions.url}
+                  style={{
+                    width: '100%',
+                    height: '100vh'
+                  }}
+                />
+              )}
             </>
-          )}
-          onClose={() => { setModalOptions({ open: false }); }}
+          }
+          onClose={() => {
+            setModalOptions({ open: false });
+          }}
           open
           dialogClassName="modal-lti"
         />
       )}
-      { /** [MM-P2P] Experiment (conditional) */ }
-      { !mmp2p.meta.blockContent && !shouldDisplayHonorCode && (
+      {/** [MM-P2P] Experiment (conditional) */}
+      {!mmp2p.meta.blockContent && !shouldDisplayHonorCode && (
         <div className="unit-iframe-wrapper">
-          <iframe
-            id="unit-iframe"
-            title={unit.title}
-            src={iframeUrl}
-            allow={IFRAME_FEATURE_POLICY}
-            allowFullScreen
-            height={iframeHeight}
-            scrolling="no"
-            referrerPolicy="origin"
-            onLoad={() => {
-              // onLoad *should* only fire after everything in the iframe has finished its own load events.
-              // Which means that the plugin.resize message (which calls setHasLoaded above) will have fired already
-              // for a successful load. If it *has not fired*, we are in an error state. For example, the backend
-              // could have given us a 4xx or 5xx response.
-              if (!hasLoaded) {
-                setShowError(true);
-              }
-
-              window.onmessage = (e) => {
-                if (e.data.event_name) {
-                  dispatch(processEvent(e.data, fetchCourse));
+          {cookiseSettings?.functional == false ? (
+            <div
+              style={{
+                width: '100%',
+                height: '100%',
+                backgroundColor: '#1c1c1c',
+                padding: '30px'
+              }}
+            >
+              <h4 style={{ color: '#fff' }}>
+                Please allow cookies to use player
+              </h4>
+            </div>
+          ) : (
+            <iframe
+              id="unit-iframe"
+              title={unit.title}
+              src={iframeUrl}
+              allow={IFRAME_FEATURE_POLICY}
+              allowFullScreen
+              height={iframeHeight}
+              scrolling="no"
+              referrerPolicy="origin"
+              onLoad={() => {
+                // onLoad *should* only fire after everything in the iframe has finished its own load events.
+                // Which means that the plugin.resize message (which calls setHasLoaded above) will have fired already
+                // for a successful load. If it *has not fired*, we are in an error state. For example, the backend
+                // could have given us a 4xx or 5xx response.
+                if (!hasLoaded) {
+                  setShowError(true);
                 }
-              };
-            }}
-          />
+
+                window.onmessage = (e) => {
+                  if (e.data.event_name) {
+                    dispatch(processEvent(e.data, fetchCourse));
+                  }
+                };
+              }}
+            />
+          )}
         </div>
       )}
     </div>
@@ -255,13 +294,13 @@ Unit.propTypes = {
   /** [MM-P2P] Experiment */
   mmp2p: PropTypes.shape({
     state: PropTypes.shape({
-      isEnabled: PropTypes.bool.isRequired,
+      isEnabled: PropTypes.bool.isRequired
     }),
     meta: PropTypes.shape({
       showLock: PropTypes.bool,
-      blockContent: PropTypes.bool,
-    }),
-  }),
+      blockContent: PropTypes.bool
+    })
+  })
 };
 
 Unit.defaultProps = {
@@ -270,13 +309,13 @@ Unit.defaultProps = {
   /** [MM-P2P] Experiment */
   mmp2p: {
     state: {
-      isEnabled: false,
+      isEnabled: false
     },
     meta: {
       showLock: false,
-      blockContent: false,
-    },
-  },
+      blockContent: false
+    }
+  }
 };
 
 export default injectIntl(Unit);
