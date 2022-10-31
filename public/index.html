@@ -1,16 +1,55 @@
 <!doctype html>
 <html lang="en-us">
-  <head>
-    <title>Course | <%= process.env.SITE_NAME %></title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="<%=htmlWebpackPlugin.options.FAVICON_URL%>" type="image/x-icon" />
 
-    <% if (htmlWebpackPlugin.options.OPTIMIZELY_PROJECT_ID) { %>
-      <script src="https://www.edx.org/optimizelyjs/<%= htmlWebpackPlugin.options.OPTIMIZELY_PROJECT_ID %>.js"></script>
+<head>
+  <title>Course | <%= process.env.SITE_NAME %>
+  </title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="<%=htmlWebpackPlugin.options.FAVICON_URL%>" type="image/x-icon" />
+
+  <!-- Matomo -->
+  <script>
+    var _mtm = window._mtm = window._mtm || [];
+    _mtm.push({ 'mtm.startTime': (new Date().getTime()), 'event': 'mtm.Start' });
+    var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+    g.async = true; g.src = 'https://matomo.liberties.eu/js/container_O2RsFPat.js'; s.parentNode.insertBefore(g, s);
+  </script>
+
+  <% if (htmlWebpackPlugin.options.OPTIMIZELY_PROJECT_ID) { %>
+    <script src="https://www.edx.org/optimizelyjs/<%= htmlWebpackPlugin.options.OPTIMIZELY_PROJECT_ID %>.js"></script>
     <% } %>
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+</head>
+
+<body>
+  <div id="root"></div>
+</body>
+
+<script>
+  function manageCookie() {
+    var cookieSetting = getCookie('cookies_settings');
+
+    if (cookieSetting) {
+      var setting = JSON.parse(cookieSetting);
+
+      if (setting.cookie.performance == false) {
+        _paq.push(['disableCookies']);
+      }
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', manageCookie);
+
+  function getCookie(name) {
+    var nameEQ = name + '=';
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+      var c = ca[i];
+      while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+      if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+  }
+</script>
+
 </html>
