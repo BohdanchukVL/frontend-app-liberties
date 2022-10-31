@@ -118,9 +118,16 @@ function Unit({
 
   useEffect(() => {
     const cookies = Cookies.get('cookies_settings');
-    console.log('COOKIE_SETTINGS', cookies);
-    console.log('COOKIE_SETTINGS_PARSED', JSON.parse(cookies));
-    setCookieSettings(JSON.parse(cookies));
+    if (cookies) {
+      try {
+        console.log('COOKIE_SETTINGS', cookies);
+        console.log('COOKIE_SETTINGS_PARSED', JSON.parse(cookies));
+        setCookieSettings(JSON.parse(cookies));
+      } catch (ex) {
+        console.log('cookies-error', ex)
+      }
+
+    }
   }, []);
 
   useEffect(() => {
