@@ -108,6 +108,8 @@ function Unit({
   const [cookiseSettings, setCookieSettings] = useState(undefined);
   const [shouldDisplayHonorCode, setShouldDisplayHonorCode] = useState(false);
 
+  let Cookies2 = Cookies.noConflict()
+
   const unit = useModel('units', id);
   const course = useModel('coursewareMeta', courseId);
   const { contentTypeGatingEnabled, userNeedsIntegritySignature } = course;
@@ -117,7 +119,11 @@ function Unit({
   useLoadBearingHook(id);
 
   useEffect(() => {
+    let allCookies = Cookies.get()
     console.log('COOKIE_SETTINGS', Cookies.get('cookies_settings'))
+    console.log('COOKIE_SETTINGS_NO_CONFLICT', Cookies2.get('cookies_settings'))
+    console.log('COOKIE_SETTINGS_SBUDOMAIN', Cookies.get('cookies_settings', { domain: 'dev-openedx.matoffo.com'}))
+    console.log('ALL_COOKIES', Cookies.get())
     setCookieSettings(Cookies.get('cookies_settings'));
   });
 
