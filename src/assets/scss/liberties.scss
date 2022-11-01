@@ -237,6 +237,10 @@ body .bg-warning-300 {
   color: #000 !important;
 }
 
+.learning-header .container-xl.py-2.d-flex  .text-gray-700.mr-3 {
+  display: none!important;
+}
+
 @media (max-width: 568px) {
   .course-title-lockup {
     font-size: 14px!important;
