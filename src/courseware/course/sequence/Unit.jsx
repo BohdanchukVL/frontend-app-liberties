@@ -120,8 +120,7 @@ function Unit({
     const cookies = Cookies.get('cookies_settings');
     if (cookies) {
       try {
-        console.log('COOKIE_SETTINGS', cookies);
-        console.log('COOKIE_SETTINGS_PARSED', JSON.parse(cookies));
+        console.log('COOKIE_SETTINGS', JSON.parse(cookies));
         setCookieSettings(JSON.parse(cookies));
       } catch (ex) {
         console.log('cookies-error', ex)
@@ -248,7 +247,7 @@ function Unit({
       {/** [MM-P2P] Experiment (conditional) */}
       {!mmp2p.meta.blockContent && !shouldDisplayHonorCode && (
         <div className="unit-iframe-wrapper">
-          {cookiseSettings?.functional == false ? (
+          {cookiseSettings?.cookie?.functional == false ? (
             <div
               style={{
                 width: '100%',
@@ -258,7 +257,7 @@ function Unit({
               }}
             >
               <h4 style={{ color: '#fff' }}>
-                Please allow cookies to use player
+                Please allow functional preferences cookies to use player
               </h4>
             </div>
           ) : (

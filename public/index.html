@@ -31,8 +31,12 @@
 
     if (cookieSetting) {
       var setting = JSON.parse(cookieSetting);
-
-      if (setting.cookie.performance == false) {
+      
+      if (setting.cookie.performance == true) {
+        console.log('PO', cookieSetting)
+        _paq.push(['setConsentGiven']);
+      } else {
+        console.log('POF', cookieSetting)
         _paq.push(['disableCookies']);
       }
     }
